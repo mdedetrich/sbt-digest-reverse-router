@@ -64,3 +64,13 @@ developers := List(
 
 licenses += ("Apache 2", url("https://opensource.org/licenses/Apache-2.0"))
 pomIncludeRepository := (_ => false)
+publishMavenStyle := true
+publishTo := {
+  val nexus = "https://oss.sonatype.org/"
+  if (isSnapshot.value)
+    Some("snapshots" at nexus + "content/repositories/snapshots")
+  else
+    Some("releases" at nexus + "service/local/staging/deploy/maven2")
+}
+publishArtifact in Test := false
+pomIncludeRepository := (_ => false)
