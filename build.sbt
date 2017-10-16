@@ -5,7 +5,7 @@ name in ThisBuild := "sbt-digest-reverse-router"
 organization in ThisBuild := "org.mdedetrich"
 scalaVersion in ThisBuild := currentScalaVersion
 crossScalaVersions in ThisBuild := Seq("2.10.6", currentScalaVersion, "2.12.3")
-version in ThisBuild := "0.1.0"
+version in ThisBuild := "0.1.1-SNAPSHOT"
 
 scalafmtVersion in ThisBuild := "1.1.0"
 
