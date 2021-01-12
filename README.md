@@ -11,14 +11,14 @@ Also make sure you use sbt-digest version 1.1.4 or later due to this
 
 ## Installation
 
-This library supports Scala Versions `2.10.x`, `2.11.x` and `2.12.x`.
+This library supports Scala Versions `2.12.x` and `2.13.x`.
 It only has a single dependency, [typesafe config](https://github.com/typesafehub/config)
 
 Add the following to your build.sbt
 
 ```sbt
 libraryDependencies ++= Seq(
-  "org.mdedetrich" %% "sbt-digest-reverse-router" % "0.1.0"
+  "org.mdedetrich" %% "sbt-digest-reverse-router" % "0.2.0"
 )
 ```
 

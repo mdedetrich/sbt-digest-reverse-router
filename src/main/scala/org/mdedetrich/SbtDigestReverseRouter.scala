@@ -12,7 +12,7 @@ trait SbtDigestReverseRouter {
   private val memoizeMap = new ConcurrentHashMap[String, String]()
 
   private val config: Config = ConfigFactory.load()
-  private val configPrefix = "sbt-digest-reverse-router"
+  private val configPrefix   = "sbt-digest-reverse-router"
 
   private val digestAlgorithm =
     config.getString(s"$configPrefix.digest-algorithm")
@@ -20,9 +20,8 @@ trait SbtDigestReverseRouter {
 
   // Efficient way to generate a checksum from an input stream https://stackoverflow.com/a/304350
   // Byte Array to hex algorithm taken from http://rgagnon.com/javadetails/java-0596.html
-  private final def digestFromInputStream(inputStream: InputStream,
-                                          algorithm: String): String = {
-    val md = MessageDigest.getInstance(algorithm)
+  private final def digestFromInputStream(inputStream: InputStream, algorithm: String): String = {
+    val md                = MessageDigest.getInstance(algorithm)
     val digestInputStream = new DigestInputStream(inputStream, md)
 
     var length = digestInputStream.read()
@@ -48,39 +47,33 @@ trait SbtDigestReverseRouter {
     sb.toString
   }
 
-  private def generateMD5FromInputStream(inputStream: InputStream): String = {
+  private def generateMD5FromInputStream(inputStream: InputStream): String =
     digestFromInputStream(inputStream, "MD5")
-  }
 
-  private def generateSHA1FromInputStream(inputStream: InputStream): String = {
+  private def generateSHA1FromInputStream(inputStream: InputStream): String =
     digestFromInputStream(inputStream, "SHA-1")
-  }
 
   private final def finalPath(path: String): String = path match {
     case ""    => ""
     case other => s"$other"
   }
 
-  private def generateChecksum(inputStream: InputStream,
-                               algorithm: String): String = {
+  private def generateChecksum(inputStream: InputStream, algorithm: String): String =
     algorithm match {
       case "sha1" => generateSHA1FromInputStream(inputStream)
       case "md5"  => generateMD5FromInputStream(inputStream)
       case _      => throw SbtDigestReverseRouter.UnknownDigestAlgorithm(algorithm)
     }
-  }
 
   // Efficient way to convert input stream to string https://stackoverflow.com/a/35446009/1519631
 
-  private final def getChecksumByFile(path: String,
-                                      assetName: String,
-                                      algorithm: String): Option[String] = {
+  private final def getChecksumByFile(path: String, assetName: String, algorithm: String): Option[String] = {
     val fileName = s"/$packagePrefix${finalPath(path)}$assetName.$algorithm"
     try {
       val inputStream = getClass.getResourceAsStream(fileName)
-      val result = new ByteArrayOutputStream
-      val buffer = new Array[Byte](8096)
-      var length = 0
+      val result      = new ByteArrayOutputStream
+      val buffer      = new Array[Byte](8096)
+      var length      = 0
       length = inputStream.read(buffer)
 
       while (length != -1) {
@@ -97,10 +90,7 @@ trait SbtDigestReverseRouter {
     }
   }
 
-  private final def getChecksumByCalculation(
-      path: String,
-      assetName: String,
-      algorithm: String): Option[String] = {
+  private final def getChecksumByCalculation(path: String, assetName: String, algorithm: String): Option[String] = {
     val fileName = s"/$packagePrefix${finalPath(path)}$assetName"
 
     try {
@@ -113,27 +103,19 @@ trait SbtDigestReverseRouter {
 
   }
 
-  @throws[SbtDigestReverseRouter.ResourceNotFound](
-    "If resource for this asset cannot be found")
-  @throws[SbtDigestReverseRouter.UnknownDigestAlgorithm](
-    "If using algorithm that is not md5 or sha1")
+  @throws[SbtDigestReverseRouter.ResourceNotFound]("If resource for this asset cannot be found")
+  @throws[SbtDigestReverseRouter.UnknownDigestAlgorithm]("If using algorithm that is not md5 or sha1")
   final def findVersionedAsset(assetFileName: String): String =
     findVersionedAsset("", assetFileName, digestAlgorithm)
 
-  @throws[SbtDigestReverseRouter.ResourceNotFound](
-    "If resource for this asset cannot be found")
-  @throws[SbtDigestReverseRouter.UnknownDigestAlgorithm](
-    "If using algorithm that is not md5 or sha1")
+  @throws[SbtDigestReverseRouter.ResourceNotFound]("If resource for this asset cannot be found")
+  @throws[SbtDigestReverseRouter.UnknownDigestAlgorithm]("If using algorithm that is not md5 or sha1")
   final def findVersionedAsset(path: String, assetFileName: String): String =
     findVersionedAsset(path, assetFileName, digestAlgorithm)
 
-  @throws[SbtDigestReverseRouter.ResourceNotFound](
-    "If resource for this asset cannot be found")
-  @throws[SbtDigestReverseRouter.UnknownDigestAlgorithm](
-    "If using algorithm that is not md5 or sha1")
-  final def findVersionedAsset(path: String,
-                               assetFileName: String,
-                               algorithm: String): String = {
+  @throws[SbtDigestReverseRouter.ResourceNotFound]("If resource for this asset cannot be found")
+  @throws[SbtDigestReverseRouter.UnknownDigestAlgorithm]("If using algorithm that is not md5 or sha1")
+  final def findVersionedAsset(path: String, assetFileName: String, algorithm: String): String = {
     val fPath = finalPath(path)
 
     val leadingPath = path match {
@@ -152,7 +134,8 @@ trait SbtDigestReverseRouter {
         (getChecksumByFile(path, assetFileName, algorithm) orElse getChecksumByCalculation(
           path,
           assetFileName,
-          algorithm)).getOrElse(
+          algorithm
+        )).getOrElse(
           throw SbtDigestReverseRouter.ResourceNotFound(key)
         )
 
